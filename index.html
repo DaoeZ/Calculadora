@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Cocinar Arroz</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .nav button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .nav button:hover {
+            background-color: #45a049;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .field select, .field input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .result {
+            font-weight: bold;
+            margin-top: 20px;
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .list {
+            margin-top: 20px;
+        }
+
+        .list h2 {
+            color: #4CAF50;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .list-item button {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .list-item button:hover {
+            background-color: #e53935;
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            text-align: center;
+            color: #d9534f;
+        }
+
+        @media (max-width: 768px) {
+            .nav button {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+
+            .field label, .field select, .field input {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <button id="menuPrincipal">Menú Principal</button>
+            <button id="menuBD">Gestión de Base de Datos</button>
+        </div>
+
+        <div id="pantallaPrincipal">
+            <h1>App Cocinar Arroz</h1>
+
+            <!-- Desplegables -->
+            <div class="field">
+                <label for="paellera">Selecciona la paellera</label>
+                <select id="paellera">
+                    <option value="0">Selecciona...</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="cazuela">Selecciona la cazuela</label>
+                <select id="cazuela">
+                    <option value="0">Selecciona...</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="arrozTipo">Selecciona el tipo de arroz</label>
+                <select id="arrozTipo">
+                    <option value="0">Selecciona...</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="grasa">Porcentaje de grasa (%)</label>
+                <select id="grasa"></select>
+                <div id="grasaResult"></div>
+            </div>
+
+            <div class="field">
+                <label for="sal">Porcentaje de sal (%)</label>
+                <select id="sal"></select>
+                <div id="salResult"></div>
+            </div>
+
+            <div class="field">
+                <label for="arroz">Peso del arroz (g)</label>
+                <input type="number" id="arroz" placeholder="Introduce el peso del arroz">
+            </div>
+
+            <!-- Resultados calculados -->
+            <div class="result" id="caldo"></div>
+            <div class="result" id="pesoTotal"></div>
+            <div class="result" id="resumen"></div>
+
+            <!-- Botón para iniciar cronómetro y contenedor del tiempo -->
+            <button id="startTimer" style="margin-top: 20px; width: 100%; background-color: #4CAF50; color: white; padding: 10px; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer;">Empezar Arroz</button>
+            <div class="timer" id="timer"></div>
+        </div>
+
+        <div id="pantallaBD" style="display: none;">
+            <h1>Gestión de Base de Datos</h1>
+
+            <div class="field">
+                <label for="nuevoPaellera">Añadir nueva paellera</label>
+                <input type="text" id="nuevoPaellera" placeholder="Nombre de la paellera">
+                <input type="number" id="evaporacionPaellera" placeholder="Evaporación (g)">
+                <button id="agregarPaellera" style="background-color: #4CAF50; color: white; border: none; border-radius: 5px; padding: 10px; cursor: pointer;">Agregar</button>
+            </div>
+
+            <div class="field">
+                <label for="nuevaCazuela">Añadir nueva cazuela</label>
+                <input type="text" id="nuevaCazuela" placeholder="Nombre de la cazuela">
+                <input type="number" id="pesoCazuela" placeholder="Peso (g)">
+                <button id="agregarCazuela" style="background-color: #4CAF50; color: white; border: none; border-radius: 5px; padding: 10px; cursor: pointer;">Agregar</button>
+            </div>
+
+            <div class="field">
+                <label for="nuevoArroz">Añadir nuevo tipo de arroz</label>
+                <input type="text" id="nuevoArroz" placeholder="Nombre del arroz">
+                <input type="number" id="tiempoCoccionArroz" placeholder="Tiempo de cocción (minutos)">
+                <button id="agregarArroz" style="background-color: #4CAF50; color: white; border: none; border-radius: 5px; padding: 10px; cursor: pointer;">Agregar</button>
+            </div>
+
+            <div class="list" id="listaPaelleras">
+                <h2>Paelleras</h2>
+            </div>
+
+            <div class="list" id="listaCazuelas">
+                <h2>Cazuelas</h2>
+            </div>
+
+            <div class="list" id="listaArroces">
+                <h2>Arroces</h2>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base de datos simulada
+        const baseDatos = {
+            paelleras: [],
+            cazuelas: [],
+            arroces: []
+        };
+
+        const guardarEnLocalStorage = () => {
+            localStorage.setItem("baseDatos", JSON.stringify(baseDatos));
+        };
+
+        const cargarDesdeLocalStorage = () => {
+            const datosGuardados = localStorage.getItem("baseDatos");
+            if (datosGuardados) {
+                const datos = JSON.parse(datosGuardados);
+                baseDatos.paelleras = datos.paelleras || [];
+                baseDatos.cazuelas = datos.cazuelas || [];
+                baseDatos.arroces = datos.arroces || [];
+            }
+        };
+
+        const actualizarDesplegables = () => {
+            document.getElementById("paellera").innerHTML = baseDatos.paelleras.map((p, index) => `<option value="${p.evaporacion}">${p.nombre}</option>`).join('');
+            document.getElementById("cazuela").innerHTML = baseDatos.cazuelas.map((c, index) => `<option value="${c.peso}">${c.nombre}</option>`).join('');
+            document.getElementById("arrozTipo").innerHTML = baseDatos.arroces.map((a, index) => `<option value="${a.tiempo}">${a.nombre}</option>`).join('');
+        };
+
+        const inicializarGrasaYSal = () => {
+            const grasaSelect = document.getElementById("grasa");
+            const salSelect = document.getElementById("sal");
+
+            grasaSelect.innerHTML = "";
+            salSelect.innerHTML = "";
+
+            for (let i = 10; i <= 20; i++) {
+                const option = document.createElement("option");
+                option.value = i / 100;
+                option.textContent = `${i}%`;
+                grasaSelect.appendChild(option);
+            }
+
+            for (let i = 1; i <= 3; i += 0.5) {
+                const option = document.createElement("option");
+                option.value = i / 100;
+                option.textContent = `${i.toFixed(1)}%`;
+                salSelect.appendChild(option);
+            }
+        };
+
+        const agregarElemento = (tipo, elemento) => {
+            baseDatos[tipo].push(elemento);
+            guardarEnLocalStorage();
+            actualizarDesplegables();
+            actualizarListas();
+        };
+
+        const actualizarListas = () => {
+            const listaPaelleras = document.getElementById("listaPaelleras");
+            listaPaelleras.innerHTML = baseDatos.paelleras.map((p, index) => `<div class="list-item">
+                <span>${p.nombre} (${p.evaporacion}g)</span>
+                <button onclick="eliminarElemento('paelleras', ${index})">Eliminar</button>
+            </div>`).join('');
+
+            const listaCazuelas = document.getElementById("listaCazuelas");
+            listaCazuelas.innerHTML = baseDatos.cazuelas.map((c, index) => `<div class="list-item">
+                <span>${c.nombre} (${c.peso}g)</span>
+                <button onclick="eliminarElemento('cazuelas', ${index})">Eliminar</button>
+            </div>`).join('');
+
+            const listaArroces = document.getElementById("listaArroces");
+            listaArroces.innerHTML = baseDatos.arroces.map((a, index) => `<div class="list-item">
+                <span>${a.nombre} (${a.tiempo} min)</span>
+                <button onclick="eliminarElemento('arroces', ${index})">Eliminar</button>
+            </div>`).join('');
+        };
+
+        const eliminarElemento = (tipo, index) => {
+            baseDatos[tipo].splice(index, 1);
+            guardarEnLocalStorage();
+            actualizarDesplegables();
+            actualizarListas();
+        };
+
+        const calcularResultados = () => {
+            const paelleraEvaporacion = parseFloat(document.getElementById("paellera").value) || 0;
+            const cazuelaPeso = parseFloat(document.getElementById("cazuela").value) || 0;
+            const arrozPeso = parseFloat(document.getElementById("arroz").value) || 0;
+            const grasaPorcentaje = parseFloat(document.getElementById("grasa").value) || 0;
+            const salPorcentaje = parseFloat(document.getElementById("sal").value) || 0;
+
+            const pesoCaldo = arrozPeso + paelleraEvaporacion;
+            const pesoTotal = pesoCaldo + cazuelaPeso;
+            const grasa = (arrozPeso * grasaPorcentaje).toFixed(2);
+            const sal = (arrozPeso * salPorcentaje).toFixed(2);
+
+            document.getElementById("caldo").textContent = `Peso del caldo necesario: ${pesoCaldo}g`;
+            document.getElementById("pesoTotal").textContent = `Peso total (caldo + cazuela): ${pesoTotal}g`;
+            document.getElementById("resumen").textContent = `Resumen: ${arrozPeso}g de arroz, ${grasa}g de grasa, ${sal}g de sal.`;
+        };
+
+        document.getElementById("arroz").addEventListener("input", calcularResultados);
+        document.getElementById("paellera").addEventListener("change", calcularResultados);
+        document.getElementById("cazuela").addEventListener("change", calcularResultados);
+        document.getElementById("grasa").addEventListener("change", calcularResultados);
+        document.getElementById("sal").addEventListener("change", calcularResultados);
+
+        document.getElementById("agregarPaellera").addEventListener("click", () => {
+            const nombre = document.getElementById("nuevoPaellera").value;
+            const evaporacion = parseInt(document.getElementById("evaporacionPaellera").value, 10);
+            if (nombre && evaporacion) {
+                agregarElemento("paelleras", { nombre, evaporacion });
+            }
+        });
+
+        document.getElementById("agregarCazuela").addEventListener("click", () => {
+            const nombre = document.getElementById("nuevaCazuela").value;
+            const peso = parseInt(document.getElementById("pesoCazuela").value, 10);
+            if (nombre && peso) {
+                agregarElemento("cazuelas", { nombre, peso });
+            }
+        });
+
+        document.getElementById("agregarArroz").addEventListener("click", () => {
+            const nombre = document.getElementById("nuevoArroz").value;
+            const tiempo = parseInt(document.getElementById("tiempoCoccionArroz").value, 10);
+            if (nombre && tiempo) {
+                agregarElemento("arroces", { nombre, tiempo });
+            }
+        });
+
+        document.getElementById("menuPrincipal").addEventListener("click", () => {
+            document.getElementById("pantallaPrincipal").style.display = "block";
+            document.getElementById("pantallaBD").style.display = "none";
+        });
+
+            document.getElementById("menuBD").addEventListener("click", () => {
+            document.getElementById("pantallaPrincipal").style.display = "none";
+            document.getElementById("pantallaBD").style.display = "block";
+        });
+
+        // Inicialización de datos
+        cargarDesdeLocalStorage();
+        actualizarDesplegables();
+        actualizarListas();
+        inicializarGrasaYSal();
+    </script>
+</body>
+</html>
